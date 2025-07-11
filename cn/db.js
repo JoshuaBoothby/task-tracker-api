@@ -13,3 +13,5 @@ export const pool = new Pool({
     rejectUnauthorized: false,
   },
 });
+
+pool.query("SET search_path TO task_tracker");
