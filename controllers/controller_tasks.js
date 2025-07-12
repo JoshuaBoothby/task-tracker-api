@@ -4,8 +4,8 @@ export const getAllTasks = async (req, res) => {
   try {
     const result = await pool.query(`
             SELECT t.*, e.name as employee_name 
-            FROM tasks t 
-            JOIN employee e ON t.employee_id = e.employee_id 
+            FROM task_tracker.tasks t 
+            JOIN task_tracker.employee e ON t.employee_id = e.employee_id 
             ORDER BY task_id
         `);
     res.json(result.rows);
@@ -18,7 +18,7 @@ export const addNewTask = async (req, res) => {
   const { description, status, employee_id } = req.body;
   try {
     const result = await pool.query(
-      "INSERT INTO tasks (description, status, employee_id) VALUES ($1, $2, $3) RETURNING *",
+      "INSERT INTO task_tracker.tasks (description, status, employee_id) VALUES ($1, $2, $3) RETURNING *",
       [description, status, employee_id]
     );
     res.status(201).json(result.rows[0]);
@@ -32,7 +32,7 @@ export const updateTask = async (req, res) => {
   const { description, status, employee_id } = req.body;
   try {
     const result = await pool.query(
-      "UPDATE tasks SET description = $1, status = $2, employee_id = $3 WHERE task_id = $4 RETURNING *",
+      "UPDATE task_tracker.tasks SET description = $1, status = $2, employee_id = $3 WHERE task_id = $4 RETURNING *",
       [description, status, employee_id, id]
     );
     if (result.rows.length === 0) {
@@ -48,7 +48,7 @@ export const deleteTask = async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      "DELETE FROM tasks WHERE task_id = $1 RETURNING *",
+      "DELETE FROM task_tracker.tasks WHERE task_id = $1 RETURNING *",
       [id]
     );
     if (result.rows.length === 0) {
