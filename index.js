@@ -1,3 +1,5 @@
+import fs from "fs";
+import https from "https";
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
@@ -6,7 +8,6 @@ import taskRoutes from "./routes/tasks.js";
 
 dotenv.config();
 const app = express();
-const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
@@ -15,6 +16,17 @@ app.use(express.json());
 app.use("/employees", employeeRoutes);
 app.use("/tasks", taskRoutes);
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+// HTTPS options
+const options = {
+  key: fs.readFileSync(
+    "/etc/letsencrypt/live/joshua-backend.codex-p4-2025.click/privkey.pem"
+  ),
+  cert: fs.readFileSync(
+    "/etc/letsencrypt/live/joshua-backend.codex-p4-2025.click/fullchain.pem"
+  ),
+};
+
+// Start HTTPS server
+https.createServer(options, app).listen(443, () => {
+  console.log("HTTPS server is running on port 443");
 });
