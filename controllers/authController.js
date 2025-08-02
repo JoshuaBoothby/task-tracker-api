@@ -8,12 +8,13 @@ export const register = async (req, res) => {
   const { email, password } = req.body;
   try {
     const hashed = await bcrypt.hash(password, 10);
-    await pool.query("INSERT INTO users (email, password) VALUES ($1, $2)", [
+    await pool.query("INSERT INTO task_tracker.users (email, password) VALUES ($1, $2)", [
       email,
       hashed,
     ]);
     res.json({ message: "User created successfully" });
   } catch (err) {
+    console.log(err.message)
     res.status(400).json({ error: "Email already exists" });
   }
 };
@@ -22,7 +23,7 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
   try {
     const result = await pool.query(
-      "SELECT * FROM users WHERE email = $1 AND active = true",
+      "SELECT * FROM task_tracker.users WHERE email = $1 AND active = true",
       [email]
     );
     if (result.rows.length === 0)
